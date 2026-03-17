@@ -18,7 +18,7 @@ On the Raspberry Pi, images are stored inside folders named after patients.
 Example:
 
 ```text
-/home/pi/ascon_demo/img/
+/home/pi/sender/img/
 ├── Rahul Kumar/
 │   ├── image1.jpg
 │   └── image2.png
