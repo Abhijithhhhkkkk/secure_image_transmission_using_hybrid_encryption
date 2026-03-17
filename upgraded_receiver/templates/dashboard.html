@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="page-shell">
+        <aside class="sidebar">
+            <div class="brand">
+                <h2>Medical Panel</h2>
+                <p>Image Receiver System</p>
+            </div>
+
+            <div class="sidebar-user">
+                <div class="avatar">{{ user[0]|upper }}</div>
+                <div>
+                    <h4>{{ user }}</h4>
+                    <p>Administrator</p>
+                </div>
+            </div>
+
+            <a href="{{ url_for('dashboard') }}" class="side-link active">Dashboard</a>
+            <a href="{{ url_for('logout') }}" class="side-link logout-link">Logout</a>
+        </aside>
+
+        <main class="main-content">
+            <div class="topbar">
+                <div>
+                    <h1>Patient Dashboard</h1>
+                    <p>Manage encrypted patient image folders</p>
+                </div>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <span class="stat-label">Total Patients</span>
+                    <h2>{{ total_patients }}</h2>
+                </div>
+
+                <div class="stat-card">
+                    <span class="stat-label">Total Images</span>
+                    <h2>{{ total_images }}</h2>
+                </div>
+            </div>
+
+            <div class="search-card">
+                <form method="GET" action="{{ url_for('dashboard') }}" class="search-form-modern">
+                    <input type="text" name="search" placeholder="Search patient name..." value="{{ search }}">
+                    <button type="submit">Search</button>
+                </form>
+            </div>
+
+            {% if patients %}
+                <div class="patient-grid">
+                    {% for patient in patients %}
+                        <div class="patient-card-modern">
+                            {% if patient.preview_image %}
+                                <img src="{{ url_for('static', filename='images/' + patient.name + '/' + patient.preview_image) }}" alt="{{ patient.name }}">
+                            {% else %}
+                                <div class="patient-placeholder">No Preview</div>
+                            {% endif %}
+
+                            <div class="patient-card-body">
+                                <h3>{{ patient.name }}</h3>
+                                <p>{{ patient.count }} image(s)</p>
+
+                                {% if patient.latest_upload %}
+                                    <small>Latest upload: {{ patient.latest_upload }}</small>
+                                {% else %}
+                                    <small>No uploads yet</small>
+                                {% endif %}
+
+                                <a href="{{ url_for('patient_view', patient_name=patient.name) }}" class="open-btn-modern">Open Folder</a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="empty-state">
+                    <h3>No patient folders found</h3>
+                    <p>Received patient folders will appear here after images are decrypted and saved.</p>
+                </div>
+            {% endif %}
+        </main>
+    </div>
+</body>
+</html>
