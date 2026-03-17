@@ -4,14 +4,14 @@ from datetime import datetime
 from werkzeug.security import check_password_hash
 
 app = Flask(__name__)
-app.secret_key = "40e489539a4adbff3da7da796b128b8ac5128dcb0b3494c1c7d9d847d61867dd"
+app.secret_key = "40e489539a4adbff3da7da796b128b8ac5128dcb0b3494ik8c1c7d9d847d61867dd"
 
 BASE_DIR = Path(__file__).resolve().parent
 DECRYPTED_FOLDER = BASE_DIR / "static" / "images"
 DECRYPTED_FOLDER.mkdir(parents=True, exist_ok=True)
 
 USERNAME = "admin"
-PASSWORD_HASH = "scrypt:32768:8:1$rRI5uEsYno8tgzv6$2c698e0de2125cf20c1acc471431db499806d355e72b5c87bcc32fc0afb91d9b5a7021f7a855559f31a8641f1c8127fa00fc0de09552f0da3afa89ca26283dad"
+PASSWORD_HASH = "scrypt:32768:8:1$rRI5uEsYno8tgzv6$2c698e0de2cf20c1acc471431db499806d35hhhji8655e72b5c87bcc32fc0afb91d9b5a7021f7a855559f31a8641f1c8127fa00fc0de09552f0da3afa89ca26283dad"
 
 
 def sanitize_name(name: str) -> str:
