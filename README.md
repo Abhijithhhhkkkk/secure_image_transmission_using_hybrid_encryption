@@ -44,12 +44,3 @@ The Raspberry Pi continuously watches the main image directory for new image fil
 
 To secure the transfer, the project uses hybrid encryption. First, the complete data packet is encrypted using ASCON, which protects the patient details and the image data. Then, the temporary ASCON key used for that encryption is itself encrypted using RSA. This method ensures that the image data remains confidential and that only the receiver can unlock the session key needed for decryption.
 
-## 3. Secure Transfer to Receiver
-Once the data has been encrypted, the Raspberry Pi sends it to the receiver machine through socket communication over Wi-Fi or a local network. The receiver system remains active and listens on a specific port for incoming connections from the sender.
-
-When the encrypted packet arrives, the receiver accepts the connection and reads the packet safely. It first uses its RSA private key to recover the temporary ASCON session key. After obtaining that session key, it uses ASCON decryption to recover the original payload. From this decrypted payload, the receiver obtains the patient name, the image filename, and the image data.
-
-## 4. Saving and Organizing Images
-After successful decryption, the receiver stores the image in a structured way. It checks whether a folder already exists for the patient name extracted from the packet. If the folder does not exist, the receiver creates it automatically.
-
-The decrypted image is then saved inside that patient’s folder, usually with a timestamp added to the filename so that files do not overwrite one another. This creates a patient-wise storage system where each patient’s images are grouped together in a separate folder. As a result, the received medical data remains organized and easy to access later through the web dashboard.
