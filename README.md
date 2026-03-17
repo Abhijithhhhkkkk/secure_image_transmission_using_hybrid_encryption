@@ -24,6 +24,7 @@ Example:
 │   └── image2.png
 ├── Anjali/
 │   └── scan1.jpg
+```
 
 ## 2. Image Detection and Encryption
 The Raspberry Pi continuously watches the main image directory for new image files. Each image is stored inside a folder named after the patient, so the folder name itself is used as the patient name. When a new image is detected, the sender program reads the patient name from the folder, reads the image file, and prepares a data packet containing the patient name, the image filename, and the image content.
