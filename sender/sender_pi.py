@@ -16,7 +16,7 @@ from cryptography.hazmat.primitives.asymmetric import padding
 WATCH_FOLDER = Path(r"C:\Users\abhijith\piproject\img")
 PUBLIC_KEY_PATH = Path(r"C:\Users\abhijith\piproject\keys\receiver_public.pem")
 
-HOST = os.getenv("RECEIVER_IP", "172.29.148.116")
+HOST = os.getenv("RECEIVER_IP", "172.24.148.116")
 PORT = 5000
 
 SOCKET_TIMEOUT = 10
