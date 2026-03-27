@@ -1,3 +1,7 @@
+
+
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -10,83 +14,139 @@
             padding: 0;
             box-sizing: border-box;
         }
-
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #eaf2ff, #f8fbff);
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background: linear-gradient(-45deg, #f5f7fa, #c3cfe2, #e0c3fc, #8ec5fc);
+            background-size: 400% 400%;
+            animation: gradientMove 15s ease infinite;
+            color: #1d1d1f;
+            -webkit-font-smoothing: antialiased;
             min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
-
+        @keyframes gradientMove {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
         .login-container {
             width: 100%;
-            max-width: 400px;
-            margin: 120px auto;
-            background: white;
-            padding: 36px 30px;
-            border-radius: 18px;
-            box-shadow: 0 14px 40px rgba(15, 23, 42, 0.12);
+            max-width: 440px;
+            background: rgba(255, 255, 255, 0.65);
+            backdrop-filter: blur(40px);
+            -webkit-backdrop-filter: blur(40px);
+            padding: 56px 48px;
+            border-radius: 36px;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.08), inset 0 0 0 1px rgba(255, 255, 255, 0.4);
+            animation: fadeUp 1s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
         }
-
+        .login-container::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0) 100%);
+            z-index: -1;
+            pointer-events: none;
+        }
         .login-container h2 {
             text-align: center;
-            margin-bottom: 24px;
-            color: #111827;
-            font-size: 28px;
+            margin-bottom: 36px;
+            color: #1d1d1f;
+            font-size: 32px;
+            font-weight: 800;
+            letter-spacing: -1px;
         }
-
         .login-container input {
             width: 100%;
-            padding: 14px 15px;
-            margin-bottom: 18px;
-            border: 1px solid #d1d5db;
-            border-radius: 12px;
-            font-size: 15px;
+            padding: 18px 24px;
+            margin-bottom: 24px;
+            background: rgba(0, 0, 0, 0.02);
+            border: 1px solid transparent;
+            border-radius: 18px;
+            font-size: 16px;
+            font-weight: 500;
+            color: #1d1d1f;
             outline: none;
-            transition: 0.2s;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
         }
-
+        .login-container input::placeholder {
+            color: #86868b;
+            font-weight: 400;
+        }
         .login-container input:focus {
-            border-color: #2563eb;
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+            background: white;
+            border-color: #0066cc;
+            box-shadow: 0 0 0 4px rgba(0, 102, 204, 0.15);
+            transform: translateY(-1px);
         }
-
         .login-container button {
             width: 100%;
-            padding: 14px;
-            background: linear-gradient(90deg, #2563eb, #1d4ed8);
+            padding: 18px;
+            margin-top: 8px;
+            background: linear-gradient(135deg, #0066cc, #004c99);
             border: none;
             color: white;
-            font-size: 16px;
-            font-weight: 600;
-            border-radius: 12px;
+            font-size: 17px;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+            border-radius: 18px;
             cursor: pointer;
-            transition: 0.25s;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: 0 8px 24px rgba(0, 102, 204, 0.25);
         }
-
         .login-container button:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 10px 20px rgba(37, 99, 235, 0.25);
+            background: linear-gradient(135deg, #0a84ff, #0066cc);
+            transform: scale(1.02) translateY(-2px);
+            box-shadow: 0 16px 32px rgba(0, 102, 204, 0.3);
         }
-
+        .login-container button:active {
+            transform: scale(0.98);
+        }
         .error-text {
-            background: #fee2e2;
-            color: #b91c1c;
-            padding: 12px 14px;
-            border-radius: 10px;
-            margin-bottom: 18px;
-            font-size: 14px;
+            background: rgba(255, 59, 48, 0.1);
+            color: #ff3b30;
+            padding: 16px;
+            border-radius: 14px;
+            margin-bottom: 24px;
+            font-size: 15px;
             text-align: center;
+            font-weight: 600;
+            box-shadow: inset 0 0 0 1px rgba(255, 59, 48, 0.2);
+            animation: fadeUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) backwards;
         }
-
         @media (max-width: 480px) {
             .login-container {
-                max-width: 92%;
-                margin: 80px auto;
-                padding: 28px 20px;
+                max-width: 90%;
+                padding: 40px 24px;
+                border-radius: 28px;
             }
-
             .login-container h2 {
-                font-size: 24px;
+                font-size: 28px;
             }
         }
     </style>
@@ -94,11 +154,9 @@
 <body>
     <div class="login-container">
         <h2>Medical Image Login</h2>
-
         {% if error %}
-            <p class="error-text">{{ error }}</p>
+        <p class="error-text">{{ error }}</p>
         {% endif %}
-
         <form method="POST">
             <input type="text" name="username" placeholder="Enter username" required>
             <input type="password" name="password" placeholder="Enter password" required>
