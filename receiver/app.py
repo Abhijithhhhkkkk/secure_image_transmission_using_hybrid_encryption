@@ -11,8 +11,7 @@ DECRYPTED_FOLDER = BASE_DIR / "static" / "images"
 DECRYPTED_FOLDER.mkdir(parents=True, exist_ok=True)
 
 USERNAME = "admin"
-PASSWORD_HASH = "scrypt:32768:8:1$rRI5uEsYno8tgzv6$2c698e0de2cf20c1acc471431db499806d35hhhji8655e72b5c87bcc32fc0afb91d9b5a7021f7a855559f31a8641f1c8127fa00fc0de09552f0da3afa89ca26283dad"
-
+PASSWORD_HASH ="scrypt:32768:8:1$ehRnpHbASUYjpfTf$1bf7d2173dc777bd54828c2c693d2f15d5f08b463e149b5c327839de6fe5ad5da40a779df33968bacb126e2cbc3f24fc5f47eb0b116b442d9b6acae372497c6c"
 
 def sanitize_name(name: str) -> str:
     allowed = []
