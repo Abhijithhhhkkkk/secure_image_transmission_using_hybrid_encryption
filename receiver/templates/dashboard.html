@@ -5,6 +5,471 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Patient Dashboard</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background: linear-gradient(-45deg, #f5f7fa, #c3cfe2, #e0c3fc, #8ec5fc);
+            background-size: 400% 400%;
+            animation: gradientMove 15s ease infinite;
+            color: #1d1d1f;
+            -webkit-font-smoothing: antialiased;
+            min-height: 100vh;
+        }
+        @keyframes gradientMove {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+        /* Layout */
+        .page-shell {
+            display: flex;
+            min-height: 100vh;
+            padding: 24px;
+            gap: 24px;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+        /* Sidebar - Light Frosted Floating Glass */
+        .sidebar {
+            width: 280px;
+            background: rgba(255, 255, 255, 0.65);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            border-radius: 32px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05), inset 0 0 0 1px rgba(255, 255, 255, 0.4);
+            padding: 36px 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            height: calc(100vh - 48px);
+            position: sticky;
+            top: 24px;
+            z-index: 10;
+            animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .brand h2 {
+            font-size: 24px;
+            margin-bottom: 6px;
+            font-weight: 700;
+            letter-spacing: -0.8px;
+            color: #1d1d1f;
+        }
+        .brand p {
+            font-size: 14px;
+            color: #515154;
+            font-weight: 500;
+        }
+        .sidebar-user {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 16px;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.02);
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .sidebar-user:hover {
+            transform: translateY(-2px);
+        }
+        .avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #0066cc, #004c99);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 18px;
+            box-shadow: 0 4px 10px rgba(0, 102, 204, 0.3);
+        }
+        .sidebar-user h4 {
+            font-size: 15px;
+            margin-bottom: 2px;
+            font-weight: 600;
+            color: #1d1d1f;
+        }
+        .sidebar-user p {
+            font-size: 13px;
+            color: #86868b;
+        }
+        .side-link {
+            display: block;
+            text-decoration: none;
+            color: #515154;
+            padding: 14px 18px;
+            border-radius: 16px;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            font-weight: 600;
+            font-size: 15px;
+        }
+        .side-link:hover,
+        .side-link.active {
+            background: rgba(0, 102, 204, 0.08);
+            color: #0066cc;
+            transform: translateX(4px);
+        }
+        .logout-link {
+            margin-top: auto;
+            color: #ff3b30;
+            background: rgba(255, 59, 48, 0.08);
+            text-align: center;
+        }
+        .logout-link:hover {
+            background: #ff3b30;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(255, 59, 48, 0.25);
+        }
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            padding: 44px 52px;
+            background: rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 36px;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.03);
+            animation: fadeIn 0.8s ease-out;
+            min-height: calc(100vh - 48px);
+            overflow-x: hidden;
+        }
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 44px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+        .topbar h1 {
+            font-size: 38px;
+            color: #1d1d1f;
+            margin-bottom: 8px;
+            font-weight: 700;
+            letter-spacing: -1.2px;
+        }
+        .topbar p {
+            color: #515154;
+            font-size: 16px;
+        }
+        /* Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 28px;
+            margin-bottom: 44px;
+        }
+        .stat-card {
+            background: rgba(255, 255, 255, 0.85);
+            border-radius: 28px;
+            padding: 32px 28px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03), inset 0 0 0 1px rgba(255, 255, 255, 0.7);
+            border: 1px solid rgba(0, 0, 0, 0.02);
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+        .stat-card::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(0, 102, 204, 0.06) 0%, rgba(255, 255, 255, 0) 100%);
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+        .stat-card:nth-child(1) {
+            animation-delay: 0.1s;
+        }
+        .stat-card:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+        .stat-card:hover {
+            transform: translateY(-6px) scale(1.02);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.06), 0 8px 16px rgba(0, 0, 0, 0.02);
+            border-color: rgba(0, 102, 204, 0.15);
+        }
+        .stat-card:hover::after {
+            opacity: 1;
+        }
+        .stat-label {
+            display: block;
+            font-size: 15px;
+            color: #515154;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+        .stat-card h2 {
+            font-size: 46px;
+            color: #1d1d1f;
+            font-weight: 800;
+            letter-spacing: -2px;
+        }
+        /* Search */
+        .search-card {
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 24px;
+            padding: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            margin-bottom: 44px;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+            animation-delay: 0.25s;
+        }
+        .search-card:hover {
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.05);
+            background: rgba(255, 255, 255, 0.85);
+        }
+        .search-form-modern {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .search-form-modern input {
+            flex: 1;
+            min-width: 220px;
+            padding: 16px 24px;
+            background: rgba(0, 0, 0, 0.02);
+            border: 1px solid transparent;
+            border-radius: 18px;
+            font-size: 16px;
+            font-weight: 500;
+            color: #1d1d1f;
+            outline: none;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .search-form-modern input::placeholder {
+            color: #86868b;
+            font-weight: 400;
+        }
+        .search-form-modern input:focus {
+            background: white;
+            border-color: #0066cc;
+            box-shadow: 0 0 0 4px rgba(0, 102, 204, 0.15);
+        }
+        .search-form-modern button {
+            padding: 16px 36px;
+            border: none;
+            border-radius: 18px;
+            background: linear-gradient(135deg, #0066cc, #004c99);
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: 0 4px 12px rgba(0, 102, 204, 0.2);
+        }
+        .search-form-modern button:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 12px 24px rgba(0, 102, 204, 0.3);
+            background: linear-gradient(135deg, #0a84ff, #0066cc);
+        }
+        .search-form-modern button:active {
+            transform: scale(0.98);
+        }
+        /* Patient cards */
+        .patient-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 32px;
+        }
+        .patient-card-modern {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 28px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03), inset 0 0 0 1px rgba(255, 255, 255, 0.7);
+            border: 1px solid rgba(0, 0, 0, 0.03);
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+        }
+        .patient-card-modern:nth-child(1) {
+            animation-delay: 0.3s;
+        }
+        .patient-card-modern:nth-child(2) {
+            animation-delay: 0.4s;
+        }
+        .patient-card-modern:nth-child(3) {
+            animation-delay: 0.5s;
+        }
+        .patient-card-modern:nth-child(4) {
+            animation-delay: 0.6s;
+        }
+        .patient-card-modern:nth-child(5) {
+            animation-delay: 0.7s;
+        }
+        .patient-card-modern:nth-child(6) {
+            animation-delay: 0.8s;
+        }
+        .patient-card-modern:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 40px 80px rgba(0, 0, 0, 0.08), 0 8px 24px rgba(0, 0, 0, 0.04);
+            border-color: rgba(0, 102, 204, 0.1);
+        }
+        .patient-card-modern img,
+        .patient-placeholder {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+            background: rgba(0, 0, 0, 0.02);
+            transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .patient-card-modern:hover img {
+            transform: scale(1.08);
+        }
+        .patient-placeholder {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #86868b;
+            font-weight: 600;
+            font-size: 15px;
+        }
+        .patient-card-body {
+            padding: 28px;
+            position: relative;
+            background: linear-gradient(to bottom, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 1) 30%);
+            margin-top: -30px;
+            backdrop-filter: blur(10px);
+        }
+        .patient-card-body h3 {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: #1d1d1f;
+            letter-spacing: -0.5px;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            background: rgba(52, 199, 89, 0.12);
+            color: #248a3d;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            box-shadow: inset 0 0 0 1px rgba(52, 199, 89, 0.2);
+        }
+        .patient-card-body p {
+            color: #515154;
+            font-size: 15px;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        .patient-card-body small {
+            display: block;
+            color: #86868b;
+            font-size: 14px;
+            margin-bottom: 24px;
+        }
+        .open-btn-modern {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            background: #34c759;
+            background: linear-gradient(135deg, #34c759, #28a745);
+            color: white;
+            padding: 16px 20px;
+            border-radius: 16px;
+            font-weight: 600;
+            font-size: 16px;
+            width: 100%;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: 0 4px 12px rgba(52, 199, 89, 0.2);
+        }
+        .open-btn-modern:hover {
+            background: linear-gradient(135deg, #30b753, #1f8b36);
+            transform: scale(1.02);
+            box-shadow: 0 12px 24px rgba(52, 199, 89, 0.3);
+        }
+        .open-btn-modern:active {
+            transform: scale(0.98);
+        }
+        /* Empty state */
+        .empty-state {
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 32px;
+            padding: 80px 24px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.02);
+            border: 2px dashed rgba(0, 0, 0, 0.06);
+        }
+        .empty-state h3 {
+            font-size: 26px;
+            margin-bottom: 12px;
+            color: #1d1d1f;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+        .empty-state p {
+            color: #515154;
+            font-size: 16px;
+        }
+        /* Responsive */
+        @media (max-width: 900px) {
+            .page-shell {
+                flex-direction: column;
+                padding: 16px;
+                gap: 16px;
+            }
+            .sidebar {
+                width: 100%;
+                position: relative;
+                height: auto;
+                top: 0;
+                border-radius: 24px;
+            }
+            .main-content {
+                padding: 24px;
+                min-height: auto;
+                border-radius: 24px;
+            }
+            .topbar h1 {
+                font-size: 32px;
+            }
+        }
+    </style>
 </head>
 <body>
     <div class="page-shell">
@@ -13,7 +478,6 @@
                 <h2>Medical Panel</h2>
                 <p>Image Receiver System</p>
             </div>
-
             <div class="sidebar-user">
                 <div class="avatar">{{ user[0]|upper }}</div>
                 <div>
@@ -21,11 +485,9 @@
                     <p>Administrator</p>
                 </div>
             </div>
-
             <a href="{{ url_for('dashboard') }}" class="side-link active">Dashboard</a>
             <a href="{{ url_for('logout') }}" class="side-link logout-link">Logout</a>
         </aside>
-
         <main class="main-content">
             <div class="topbar">
                 <div>
@@ -33,56 +495,53 @@
                     <p>Manage encrypted patient image folders</p>
                 </div>
             </div>
-
             <div class="stats-grid">
                 <div class="stat-card">
                     <span class="stat-label">Total Patients</span>
                     <h2>{{ total_patients }}</h2>
                 </div>
-
                 <div class="stat-card">
                     <span class="stat-label">Total Images</span>
                     <h2>{{ total_images }}</h2>
                 </div>
             </div>
-
             <div class="search-card">
                 <form method="GET" action="{{ url_for('dashboard') }}" class="search-form-modern">
                     <input type="text" name="search" placeholder="Search patient name..." value="{{ search }}">
                     <button type="submit">Search</button>
                 </form>
             </div>
-
             {% if patients %}
-                <div class="patient-grid">
-                    {% for patient in patients %}
-                        <div class="patient-card-modern">
-                            {% if patient.preview_image %}
-                                <img src="{{ url_for('static', filename='images/' + patient.name + '/' + patient.preview_image) }}" alt="{{ patient.name }}">
-                            {% else %}
-                                <div class="patient-placeholder">No Preview</div>
-                            {% endif %}
-
-                            <div class="patient-card-body">
-                                <h3>{{ patient.name }}</h3>
-                                <p>{{ patient.count }} image(s)</p>
-
-                                {% if patient.latest_upload %}
-                                    <small>Latest upload: {{ patient.latest_upload }}</small>
-                                {% else %}
-                                    <small>No uploads yet</small>
-                                {% endif %}
-
-                                <a href="{{ url_for('patient_view', patient_name=patient.name) }}" class="open-btn-modern">Open Folder</a>
-                            </div>
-                        </div>
-                    {% endfor %}
+            <div class="patient-grid">
+                {% for patient in patients %}
+                <div class="patient-card-modern">
+                    {% if patient.preview_image %}
+                    <img src="{{ url_for('static', filename='images/' + patient.name + '/' + patient.preview_image) }}"
+                        alt="{{ patient.name }}">
+                    {% else %}
+                    <div class="patient-placeholder">No Preview</div>
+                    {% endif %}
+                    <div class="patient-card-body">
+                        <h3>{{ patient.name }}</h3>
+                        <!-- Added Information Badge -->
+                        <span class="status-badge">Encrypted</span>
+                        <p>{{ patient.count }} image(s)</p>
+                        {% if patient.latest_upload %}
+                        <small>Latest upload: {{ patient.latest_upload }}</small>
+                        {% else %}
+                        <small>No uploads yet</small>
+                        {% endif %}
+                        <a href="{{ url_for('patient_view', patient_name=patient.name) }}" class="open-btn-modern">Open
+                            Folder</a>
+                    </div>
                 </div>
+                {% endfor %}
+            </div>
             {% else %}
-                <div class="empty-state">
-                    <h3>No patient folders found</h3>
-                    <p>Received patient folders will appear here after images are decrypted and saved.</p>
-                </div>
+            <div class="empty-state">
+                <h3>No patient folders found</h3>
+                <p>Received patient folders will appear here after images are decrypted and saved.</p>
+            </div>
             {% endif %}
         </main>
     </div>
