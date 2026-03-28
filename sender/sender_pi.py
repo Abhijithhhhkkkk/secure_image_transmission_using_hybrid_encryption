@@ -13,10 +13,10 @@ from cryptography.hazmat.primitives.asymmetric import padding
 # ----------------------------
 # CONFIG
 # ----------------------------
-WATCH_FOLDER = Path(r"C:\Users\abhijith\piproject\img")
-PUBLIC_KEY_PATH = Path(r"C:\Users\abhijith\piproject\keys\receiver_public.pem")
+WATCH_FOLDER = Path(r"C:\Users\abhijith\secure_image_transmission_using_hybrid_encryption\sender\img")
+PUBLIC_KEY_PATH = Path(r"C:\Users\abhijith\secure_image_transmission_using_hybrid_encryption\sender\new_public.pem")
 
-HOST = os.getenv("RECEIVER_IP", "172.24.148.116")
+HOST = os.getenv("RECEIVER_IP", "192.168.1.73")
 PORT = 5000
 
 SOCKET_TIMEOUT = 10
@@ -77,6 +77,8 @@ def get_patient_name(image_path: Path) -> str:
 def build_secure_payload(patient_name: str, filename: str, image_bytes: bytes) -> bytes:
     patient_name_b = patient_name.encode("utf-8", errors="replace")
     filename_b = filename.encode("utf-8", errors="replace")
+    print(f"no.of bytes in patient name: {len(patient_name_b)}")
+    print(f"no.of bytes in filename: {len(filename_b)}")
 
     if len(patient_name_b) > 255:
         patient_name_b = patient_name_b[:255]
@@ -99,8 +101,13 @@ def send_image(path: Path) -> None:
 
     ascon_key = os.urandom(16)
     nonce = os.urandom(16)
+    print(f"Preparing to send: {path.name} (Patient: {patient_name}, Size: {len(image_bytes)} bytes)");
 
     secure_payload = build_secure_payload(patient_name, path.name, image_bytes)
+    print(f"Secure payload size: {len(secure_payload)} bytes")
+    print(f"Encrypting with ASCON...:{ascon_key}")
+    print(f"Nonce: {nonce}")
+    
     ciphertext = encrypt(ascon_key, nonce, AAD, secure_payload)
 
     rsa_ct = public_key.encrypt(

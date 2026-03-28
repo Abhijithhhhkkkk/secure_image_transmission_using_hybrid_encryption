@@ -14,8 +14,8 @@ HOST = "0.0.0.0"
 PORT = 5000
 AAD = b"MEDIMGv1"
 
-PRIVATE_KEY_PATH = "receiver_private.pem"
-SAVE_DIR = Path(r"C:\Users\abhijith\upgraded_receiver\static\images")
+PRIVATE_KEY_PATH = "new_private.pem"
+SAVE_DIR = Path(r"C:\Users\abhijith\secure_image_transmission_using_hybrid_encryption\receiver\static\images")
 SAVE_DIR.mkdir(parents=True, exist_ok=True)
 
 
@@ -32,6 +32,7 @@ def recv_exact(conn, n: int) -> bytes:
     data = b""
     while len(data) < n:
         chunk = conn.recv(n - len(data))
+        print(f"Received chunk: {len(chunk)} bytes")
         if not chunk:
             raise ConnectionError("Connection closed early")
         data += chunk
@@ -47,6 +48,7 @@ def parse_secure_payload(payload: bytes):
     [filename bytes]
     [image bytes]
     """
+    print(f"Parsing secure payload of size: {len(payload)} bytes")
     offset = 0
 
     if len(payload) < 2:
@@ -118,6 +120,7 @@ while True:
                 label=None,
             ),
         )
+        print(f"Decrypted session key: {session_key}")
 
         plaintext = decrypt(session_key, nonce, AAD, ciphertext)
 
