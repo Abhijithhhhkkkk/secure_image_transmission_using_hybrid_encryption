@@ -2,46 +2,118 @@
 
 ## Project Overview
 
-The Medical Image Receiver System is a secure image transfer and viewing platform designed for medical data. It uses a Raspberry Pi as the sender and a laptop or computer as the receiver. Medical images are transferred over a local network in encrypted form, decrypted only at the receiver side, and then displayed in a web dashboard organized by patient name.
+The Medical Image Receiver System is a small, secure platform for transferring medical images from a Raspberry Pi (sender) to a laptop/computer (receiver) on a local network. The system uses a hybrid encryption scheme (ASCON for payload encryption and RSA to protect the session key) so that patient-identifying information and image data are protected during transit.
 
-The main purpose of the project is to ensure that patient images are transferred securely and stored in a structured way for easy viewing.
+Core goals:
+- Confidential transfer of patient images between devices on a trusted network.
+- Simple, patient-wise organization of received images on the receiver machine.
+- Minimal setup so it can run on low-power hardware (Raspberry Pi).
 
 ---
 
-## How the Project Works
+## Key Features
 
-The project works in four main stages:
+- Watches a configured directory on the sender for new images organized by patient name.
+- Packages patient metadata and image bytes into a single data packet.
+- Encrypts the packet with ASCON using a one-time session key.
+- Encrypts the ASCON session key with the receiver's RSA public key (hybrid encryption).
+- Sends the encrypted packet over a TCP socket to the receiver.
+- Receiver decrypts the session key with its RSA private key, decrypts the packet, and stores the image in a patient-specific folder with a timestamped filename.
 
-### 1. Patient Image Storage on Raspberry Pi
-On the Raspberry Pi, images are stored inside folders named after patients.
+---
+
+## How It Works (high level)
+
+1) Patient image storage on Raspberry Pi
+- Sender directory layout should be: /home/pi/sender/img/<PatientName>/<image-files>
+- Each folder name is treated as the patient identifier.
 
 Example:
 
 ```text
 /home/pi/sender/img/
-├── Rahul /
+├── Rahul/
 │   ├── image1.jpg
 │   └── image2.png
 ├── Anjali/
 │   └── scan1.jpg
 ```
 
-## 2. Image Detection and Encryption
-The Raspberry Pi continuously watches the main image directory for new image files. Each image is stored inside a folder named after the patient, so the folder name itself is used as the patient name. When a new image is detected, the sender program reads the patient name from the folder, reads the image file, and prepares a data packet containing the patient name, the image filename, and the image content.
+2) Image detection & encryption
+- A file-watcher (inotify or polling) detects newly added image files.
+- When a new file is detected, the sender builds a data packet containing:
+  - patient name (from folder name)
+  - filename and timestamp
+  - mime type and optional metadata
+  - raw image bytes (or a compressed representation)
+- The packet is encrypted using ASCON with a randomly generated session key.
+- The session key is encrypted using the receiver's RSA public key and attached to the packet.
 
-To secure the transfer, the project uses hybrid encryption. First, the complete data packet is encrypted using ASCON, which protects the patient details and the image data. Then, the temporary ASCON key used for that encryption is itself encrypted using RSA. This method ensures that the image data remains confidential and that only the receiver can unlock the session key needed for decryption.
+3) Secure transfer to receiver
+- The sender connects to the receiver's configured host and TCP port and sends the encrypted packet.
+- The receiver listens for incoming connections, validates incoming packets, and acknowledges receipt.
+- Optional: add TLS for socket transport or implement application-level integrity checks (HMAC or authenticated encryption — ASCON already provides AEAD semantics for the payload).
 
-## 3. Secure Transfer to Receiver
-Once the data has been encrypted, the Raspberry Pi sends it to the receiver machine through socket communication over Wi-Fi or a local network. The receiver system remains active and listens on a specific port for incoming connections from the sender.
+4) Saving and organizing images on receiver
+- The receiver uses its RSA private key to decrypt the ASCON session key.
+- Using the recovered session key, the receiver decrypts the payload and extracts the patient name and image bytes.
+- The receiver ensures a directory exists for the patient (e.g., ./images/<PatientName>/) and saves the image using a timestamped filename to avoid overwrites.
 
-When the encrypted packet arrives, the receiver accepts the connection and reads the packet safely. It first uses its RSA private key to recover the temporary ASCON session key. After obtaining that session key, it uses ASCON decryption to recover the original payload. From this decrypted payload, the receiver obtains the patient name, the image filename, and the image data.
+---
 
-## 4. Saving and Organizing Images
-After successful decryption, the receiver stores the image in a structured way. It checks whether a folder already exists for the patient name extracted from the packet. If the folder does not exist, the receiver creates it automatically.
+## Requirements
 
-The decrypted image is then saved inside that patient’s folder, usually with a timestamp added to the filename so that files do not overwrite one another. This creates a patient-wise storage system where each patient’s images are grouped together in a separate folder. As a result, the received medical data remains organized and easy to access later through the web dashboard
-.## 2. Image Detection and Encryption
-The Raspberry Pi continuously watches the main image directory for new image files. Each image is stored inside a folder named after the patient, so the folder name itself is used as the patient name. When a new image is detected, the sender program reads the patient name from the folder, reads the image file, and prepares a data packet containing the patient name, the image filename, and the image content.
+- Raspberry Pi or Linux sender (Python 3.8+ recommended)
+- Receiver machine (Linux/macOS/Windows) with Python 3.8+
+- Python dependencies: ascon implementation, pycryptodome or cryptography for RSA operations, watchdog (or other file-watcher), and any socket/networking libraries used by the implementation.
+- RSA keypair generated for the receiver (public key accessible by the sender).
 
-To secure the transfer, the project uses hybrid encryption. First, the complete data packet is encrypted using ASCON, which protects the patient details and the image data. Then, the temporary ASCON key used for that encryption is itself encrypted using RSA. This method ensures that the image data remains confidential and that only the receiver can unlock the session key needed for decryption.
+---
 
+## Setup (example)
+
+1. Generate RSA keypair on the receiver and copy the public key to the sender:
+
+```bash
+# On receiver
+openssl genpkey -algorithm RSA -out receiver_private.pem -pkeyopt rsa_keygen_bits:2048
+openssl rsa -in receiver_private.pem -pubout -out receiver_public.pem
+# Copy receiver_public.pem to the Raspberry Pi sender (e.g., /home/pi/sender/keys/)
+```
+
+2. Configure sender settings (host, port, path to receiver_public.pem, image directory).
+3. Configure receiver settings (listening port, path to receiver_private.pem, storage directory).
+
+---
+
+## Running (example)
+
+- Start the receiver first so it is listening for connections.
+- Start the sender/watcher on the Raspberry Pi. When a new image is placed in /home/pi/sender/img/<PatientName>/, the watcher packages, encrypts, and transmits the file.
+
+---
+
+## Security notes and best practices
+
+- Keep the receiver private key secret and protected (file permissions, secure storage).
+- Use sufficiently strong RSA key sizes (2048 bits or higher) and rotate keys periodically.
+- Consider running the socket over TLS (or a VPN) if network-level security is required beyond local network trust.
+- Validate and sanitize patient names before using them as directory names to prevent path traversal or filesystem injection.
+- Limit accepted file types and scan images for malware if running in untrusted environments.
+
+---
+
+## Contribution and Improvements
+
+This README is intentionally concise. Possible improvements:
+- Add exact packet format (JSON header + binary body), length prefixes, and sample wire format.
+- Add an end-to-end usage guide with example commands and sample keys.
+- Provide automated tests and CI for cryptographic operations.
+
+If you want, I can update this README with a specific packet schema and exact commands matching the implementation in this repository.
+
+---
+
+## License
+
+Include an appropriate license file in the repository (e.g., MIT) if you want this project to be open-source.
