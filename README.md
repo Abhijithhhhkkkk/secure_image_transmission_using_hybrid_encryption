@@ -74,12 +74,7 @@ Example:
 
 1. Generate RSA keypair on the receiver and copy the public key to the sender:
 
-```bash
-# On receiver
-openssl genpkey -algorithm RSA -out receiver_private.pem -pkeyopt rsa_keygen_bits:2048
-openssl rsa -in receiver_private.pem -pubout -out receiver_public.pem
-# Copy receiver_public.pem to the Raspberry Pi sender (e.g., /home/pi/sender/keys/)
-```
+`
 
 2. Configure sender settings (host, port, path to receiver_public.pem, image directory).
 3. Configure receiver settings (listening port, path to receiver_private.pem, storage directory).
