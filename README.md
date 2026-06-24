@@ -98,17 +98,3 @@ Example:
 
 ---
 
-## Contribution and Improvements
-
-This README is intentionally concise. Possible improvements:
-- Add exact packet format (JSON header + binary body), length prefixes, and sample wire format.
-- Add an end-to-end usage guide with example commands and sample keys.
-- Provide automated tests and CI for cryptographic operations.
-
-If you want, I can update this README with a specific packet schema and exact commands matching the implementation in this repository.
-
----
-
-## License
-
-Include an appropriate license file in the repository (e.g., MIT) if you want this project to be open-source.
