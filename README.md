@@ -19,7 +19,7 @@ Example:
 
 ```text
 /home/pi/sender/img/
-├── Rahul Kumar/
+├── Rahul /
 │   ├── image1.jpg
 │   └── image2.png
 ├── Anjali/
