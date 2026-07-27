@@ -176,9 +176,6 @@ When a new image is placed in `/home/pi/sender/img/<PatientName>/`, the sender:
 secure_image_transmission_using_hybrid_encryption/
 ├── sender.py              # Sender-side implementation
 ├── receiver.py            # Receiver-side implementation
-├── crypto_utils.py        # Encryption/decryption utilities
-├── config.py              # Configuration settings
-├── requirements.txt       # Python dependencies
 ├── screenshots/           # Implementation and performance screenshots
 │   ├── 1.jpeg            # Performance analysis
 │   ├── 2.jpeg            # Receiver implementation
