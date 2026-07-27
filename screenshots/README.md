@@ -6,7 +6,7 @@ This folder contains screenshots demonstrating the implementation and performanc
 | File | Description |
 |------|-------------|
 | 1.jpeg | Performance analysis showing encryption time, decryption time, transmission time, throughput, and end-to-end delay. |
-| 2.jpeg | Sender-side implementation responsible for detecting images, encrypting data using ASCON, securing the session key with RSA, and transmitting the encrypted packet. |
-| 3.jpeg | Receiver-side implementation responsible for receiving the encrypted packet, decrypting the RSA-protected session key, decrypting the image, and securely storing the recovered image. |
+| 2.jpeg | Receiver-side implementation responsible for receiving the encrypted packet, decrypting the RSA-protected session key, decrypting the image, and securely storing the recovered image. |
+| 3.jpeg |  Sender-side implementation responsible for detecting images, encrypting data using ASCON, securing the session key with RSA, and transmitting the encrypted packet.|
 
 These screenshots provide an overview of the project's implementation and performance evaluation.
