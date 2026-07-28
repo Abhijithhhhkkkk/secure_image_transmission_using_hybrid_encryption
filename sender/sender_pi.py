@@ -13,10 +13,10 @@ from cryptography.hazmat.primitives.asymmetric import padding
 # ----------------------------
 # CONFIG
 # ----------------------------
-WATCH_FOLDER = Path(r"C:\Users\abhijith\secure_image_transmission_using_hybrid_encryption\sender\img")
-PUBLIC_KEY_PATH = Path(r"C:\Users\abhijith\secure_image_transmission_using_hybrid_encryption\sender\new_public.pem")
+WATCH_FOLDER = Path(r"/home/abhijithk/secure_image_transmission_using_hybrid_encryption/sender/img")
+PUBLIC_KEY_PATH = Path(r"/home/abhijithk/secure_image_transmission_using_hybrid_encryption/sender/new_public.pem")
 
-HOST = os.getenv("RECEIVER_IP", "192.168.1.73")
+HOST = input("Enter receiver IP address: ").strip()
 PORT = 5000
 
 SOCKET_TIMEOUT = 10

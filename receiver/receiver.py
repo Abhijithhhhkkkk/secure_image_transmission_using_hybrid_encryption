@@ -92,7 +92,20 @@ print(f"Saving decrypted images to: {SAVE_DIR}")
 
 while True:
     conn, addr = server.accept()
-    print("Connected from:", addr)
+    print("Connection request from:", addr)
+
+    choice = input("Accept connection? (yes/no): ").strip().lower()
+
+    if choice not in ("yes", "y"):
+        print("Connection rejected.")
+        conn.sendall(b"REJECT")
+        conn.close()
+        continue
+
+    conn.sendall(b"ACCEPT")
+    print("Connection accepted.")
+
+    
 
     try:
         total_size = int.from_bytes(recv_exact(conn, 8), "big")
