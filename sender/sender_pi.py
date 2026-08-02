@@ -23,7 +23,7 @@ PUBLIC_KEY_PATH = Path(
     "/home/abhijithk/secure_image_transmission_using_hybrid_encryption/sender/new_public.pem"
 )
 
-HOST = os.getenv("RECEIVER_IP", "192.168.1.76")
+HOST = input("Enter receiver IP address: ").strip()
 PORT = 5000
 
 SOCKET_TIMEOUT = 10
