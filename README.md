@@ -1,4 +1,4 @@
-# Medical Image Receiver System
+# Secure IOT Based Medical Image Transmission 
 
 ## Project Overview
 
