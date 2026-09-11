@@ -14,13 +14,13 @@ The **Medical Image Receiver System** is a secure platform for transferring medi
 
 ## Key Features
 
-✅ **Automatic Detection** — Watches a configured directory for new images organized by patient name  
-✅ **Hybrid Encryption** — ASCON (symmetric) + RSA (asymmetric) for optimal security and performance  
-✅ **Metadata Packaging** — Combines patient metadata and image bytes into a single encrypted packet  
-✅ **One-Time Session Keys** — Generates fresh ASCON keys per transmission  
-✅ **Secure TCP Transfer** — Encrypted packet delivery over socket connection  
-✅ **Organized Storage** — Receiver automatically creates patient-specific folders with timestamped filenames  
-✅ **Integrity Verification** — AEAD semantics provided by ASCON  
+**Automatic Detection** — Watches a configured directory for new images organized by patient name  
+ **Hybrid Encryption** — ASCON (symmetric) + RSA (asymmetric) for optimal security and performance  
+**Metadata Packaging** — Combines patient metadata and image bytes into a single encrypted packet  
+ **One-Time Session Keys** — Generates fresh ASCON keys per transmission  
+ **Secure TCP Transfer** — Encrypted packet delivery over socket connection  
+ **Organized Storage** — Receiver automatically creates patient-specific folders with timestamped filenames  
+ **Integrity Verification** — AEAD semantics provided by ASCON  
 
 ---
 
@@ -28,7 +28,7 @@ The **Medical Image Receiver System** is a secure platform for transferring medi
 
 ### How It Works (High Level)
 
-#### 1️⃣ Patient Image Storage on Raspberry Pi
+#### Patient Image Storage on Raspberry Pi
 
 Images should be organized by patient name in the sender directory:
 
@@ -43,7 +43,7 @@ Images should be organized by patient name in the sender directory:
 
 **Directory Layout:** `/home/pi/sender/img/<PatientName>/<image-files>`
 
-#### 2️⃣ Image Detection & Encryption
+####  Image Detection & Encryption
 
 - File-watcher (inotify or polling) detects newly added image files
 - Sender builds encrypted packet containing:
@@ -56,14 +56,14 @@ Images should be organized by patient name in the sender directory:
 
 **See:** [Sender-side implementation](screenshots/3.jpeg)
 
-#### 3️⃣ Secure Transfer to Receiver
+####  Secure Transfer to Receiver
 
 - Sender connects to receiver's configured host and TCP port
 - Encrypted packet transmitted over socket
 - Receiver listens for incoming connections, validates packets, and acknowledges receipt
 - Optional: TLS for socket transport or application-level integrity checks
 
-#### 4️⃣ Saving and Organizing Images on Receiver
+#### Saving and Organizing Images on Receiver
 
 - Receiver uses RSA private key to decrypt ASCON session key
 - Session key used to decrypt payload and extract patient name and image bytes
@@ -161,12 +161,12 @@ When a new image is placed in `/home/pi/sender/img/<PatientName>/`, the sender:
 
 ## Security Best Practices
 
-🔒 **Private Key Protection** — Keep receiver private key secret with restricted file permissions  
-🔒 **Strong RSA Keys** — Use 2048 bits or higher; rotate keys periodically  
-🔒 **Network Security** — Consider TLS or VPN if network-level security is required  
-🔒 **Input Validation** — Sanitize patient names to prevent path traversal or filesystem injection  
-🔒 **File Type Restrictions** — Limit accepted image formats; scan for malware in untrusted environments  
-🔒 **Access Control** — Restrict receiver listening port to trusted networks only  
+**Private Key Protection** — Keep receiver private key secret with restricted file permissions  
+**Strong RSA Keys** — Use 2048 bits or higher; rotate keys periodically  
+**Network Security** — Consider TLS or VPN if network-level security is required  
+**Input Validation** — Sanitize patient names to prevent path traversal or filesystem injection  
+**File Type Restrictions** — Limit accepted image formats; scan for malware in untrusted environments  
+**Access Control** — Restrict receiver listening port to trusted networks only  
 
 ---
 
